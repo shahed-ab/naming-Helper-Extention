@@ -6,6 +6,7 @@ import {
   DEFAULT_CONFIG,
 } from './types';
 import { inferFromInitializer } from './rules/fromValue';
+import { inferFromUsage } from './rules/fromUsage';
 
 /**
  * Standard JavaScript and TypeScript reserved words.
@@ -112,6 +113,7 @@ export function suggestCandidates(
   // 1. Gather raw candidates from rules
   const rawCandidates: Candidate[] = [];
   rawCandidates.push(...inferFromInitializer(decl));
+  rawCandidates.push(...inferFromUsage(decl));
 
   // 2. Filter out:
   // - Names matching old name

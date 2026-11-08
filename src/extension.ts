@@ -6,6 +6,8 @@ import {
   applySafeRename,
   addIgnoredName,
 } from './codeActions';
+import { NamingHelperHoverProvider } from './hover';
+import { openNamingRulesGuide } from './guide';
 
 let diagnosticsManager: DiagnosticsManager | undefined;
 
@@ -118,6 +120,23 @@ export function activate(context: vscode.ExtensionContext): void {
       )
     );
   }
+
+  // Register Hover Provider
+  for (const language of supportedLanguages) {
+    context.subscriptions.push(
+      vscode.languages.registerHoverProvider(
+        { language, scheme: 'file' },
+        new NamingHelperHoverProvider(diagnosticsManager)
+      )
+    );
+  }
+
+  // Command: Explain Naming Rules
+  context.subscriptions.push(
+    vscode.commands.registerCommand('namingHelper.explainRules', () => {
+      openNamingRulesGuide();
+    })
+  );
 
   // Command: Apply Safe Rename
   context.subscriptions.push(
