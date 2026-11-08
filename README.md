@@ -4,6 +4,11 @@
 <img src="images/icon.png" alt="Naming Helper logo" width="110" />
 
 # Naming Helper
+> **Helps beginner developers write better variable names by detecting weak names and suggesting clearer, context-aware alternatives.**
+
+Naming Helper scans your JavaScript and TypeScript files in real-time, detects weak placeholder names (like `x`, `temp`, `data2`, `res`), infers what the variable actually represents from its initializer and usage, suggests clearer names, and explains **WHY** in beginner-friendly language.
+
+It works **100% offline** using AST analysis rules. Optional AI assistance is opt-in and privacy-preserving.
 
 **Stop naming things `x`, `temp`, and `data2`.**
 Smart, beginner-friendly variable naming suggestions that teach you *why*, not just *what*.
