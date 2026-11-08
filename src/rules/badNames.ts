@@ -6,6 +6,7 @@ import {
   WeakNameViolation,
   DEFAULT_CONFIG,
 } from '../types';
+import { inferFromInitializer } from './fromValue';
 
 /**
  * Checks whether an identifier is used in a math or coordinate context
@@ -181,15 +182,20 @@ export function checkWeakName(
       return null;
     }
 
+    const candidates = inferFromInitializer(decl);
     return {
       name: rawName,
       range: decl.range,
       ruleId: 'blocklist',
-      message: `'${rawName}' is a vague placeholder name.`,
-      explanation: `'${rawName}' doesn't tell a reader what it holds or represents.`,
-      namingTip: 'Choose a descriptive noun that reveals intent and context.',
+      message: candidates.length > 0
+        ? `'${rawName}' is a vague placeholder name. Consider '${candidates[0].name}'.`
+        : `'${rawName}' is a vague placeholder name.`,
+      explanation: candidates.length > 0
+        ? `'${rawName}' doesn't tell a reader what it holds. Since it stores ${candidates[0].reason.toLowerCase()}, a name like '${candidates[0].name}' communicates both what it is and what it is for.`
+        : `'${rawName}' doesn't tell a reader what it holds or represents.`,
+      namingTip: candidates[0]?.tip ?? 'Choose a descriptive noun that reveals intent and context.',
       declaration: decl,
-      candidates: [],
+      candidates,
     };
   }
 
@@ -226,15 +232,20 @@ export function checkWeakName(
       return null;
     }
 
+    const candidates = inferFromInitializer(decl);
     return {
       name: rawName,
       range: decl.range,
       ruleId: 'single-letter',
-      message: `'${rawName}' is a single-letter name outside permitted loop or math contexts.`,
-      explanation: `Single-letter names make code hard to read, maintain, and search for.`,
-      namingTip: 'Use a clear word explaining what value this variable holds.',
+      message: candidates.length > 0
+        ? `'${rawName}' is a single-letter name. Consider '${candidates[0].name}'.`
+        : `'${rawName}' is a single-letter name outside permitted loop or math contexts.`,
+      explanation: candidates.length > 0
+        ? `Single-letter names make code hard to read. Based on its value, '${candidates[0].name}' provides immediate clarity.`
+        : `Single-letter names make code hard to read, maintain, and search for.`,
+      namingTip: candidates[0]?.tip ?? 'Use a clear word explaining what value this variable holds.',
       declaration: decl,
-      candidates: [],
+      candidates,
     };
   }
 
@@ -256,15 +267,18 @@ export function checkWeakName(
 
     // If repeated in scope, or generic base name like item1, user1
     if (isRepeated || ['item', 'list', 'data', 'temp', 'user', 'val'].includes(baseName.toLowerCase())) {
+      const candidates = inferFromInitializer(decl);
       return {
         name: rawName,
         range: decl.range,
         ruleId: 'trailing-number',
-        message: `'${rawName}' uses a numeric suffix instead of a descriptive role.`,
+        message: candidates.length > 0
+          ? `'${rawName}' uses a numeric suffix. Consider '${candidates[0].name}'.`
+          : `'${rawName}' uses a numeric suffix instead of a descriptive role.`,
         explanation: `Number suffixes like '${rawName}' usually mean variables should be in an array or given more distinct roles (e.g., activeUser vs pendingUser).`,
-        namingTip: 'Differentiate variables by their role or state instead of adding numbers.',
+        namingTip: candidates[0]?.tip ?? 'Differentiate variables by their role or state instead of adding numbers.',
         declaration: decl,
-        candidates: [],
+        candidates,
       };
     }
   }
@@ -272,28 +286,34 @@ export function checkWeakName(
   // 4. Type contradiction check
   // e.g. A boolean called 'flag' or an array called 'item'
   if (isInferredBoolean(decl) && ['flag', 'val', 'value', 'temp'].includes(lowerName)) {
+    const candidates = inferFromInitializer(decl);
     return {
       name: rawName,
       range: decl.range,
       ruleId: 'type-contradiction',
-      message: `'${rawName}' is a boolean but lacks an is/has/should prefix.`,
+      message: candidates.length > 0
+        ? `'${rawName}' is a boolean but lacks an is/has prefix. Consider '${candidates[0].name}'.`
+        : `'${rawName}' is a boolean but lacks an is/has/should prefix.`,
       explanation: `Booleans represent true/false conditions. A name like '${rawName}' hides the fact that it is a boolean.`,
-      namingTip: "Prefix boolean variables with 'is', 'has', 'should', or 'can'.",
+      namingTip: candidates[0]?.tip ?? "Prefix boolean variables with 'is', 'has', 'should', or 'can'.",
       declaration: decl,
-      candidates: [],
+      candidates,
     };
   }
 
   if (isInferredArray(decl) && ['item', 'element', 'thing', 'entry'].includes(lowerName)) {
+    const candidates = inferFromInitializer(decl);
     return {
       name: rawName,
       range: decl.range,
       ruleId: 'type-contradiction',
-      message: `'${rawName}' holds a collection/array but uses a singular noun.`,
+      message: candidates.length > 0
+        ? `'${rawName}' holds an array but uses a singular noun. Consider '${candidates[0].name}'.`
+        : `'${rawName}' holds a collection/array but uses a singular noun.`,
       explanation: `'${rawName}' holds a list of items, but its singular name implies a single item.`,
-      namingTip: 'Use plural nouns (e.g. items, elements) for collections and arrays.',
+      namingTip: candidates[0]?.tip ?? 'Use plural nouns (e.g. items, elements) for collections and arrays.',
       declaration: decl,
-      candidates: [],
+      candidates,
     };
   }
 
