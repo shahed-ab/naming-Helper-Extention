@@ -311,7 +311,7 @@ Released under the [MIT License](LICENSE).
 
 **If Naming Helper made your code a little clearer, consider giving it a ⭐**
 
-Made with care by [YOUR_NAME](https://github.com/YOUR_USERNAME)
+Made with care by [SHAHED](https://github.com/shahed-ab)
 
 </div>
 ## 📄 License
