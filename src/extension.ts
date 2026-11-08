@@ -1,6 +1,11 @@
 import * as vscode from 'vscode';
 import { DiagnosticsManager } from './diagnostics';
 import { getConfig } from './config';
+import {
+  NamingHelperCodeActionProvider,
+  applySafeRename,
+  addIgnoredName,
+} from './codeActions';
 
 let diagnosticsManager: DiagnosticsManager | undefined;
 
@@ -92,6 +97,57 @@ export function activate(context: vscode.ExtensionContext): void {
         `Naming Helper has been ${!current ? 'enabled' : 'disabled'}.`
       );
     })
+  );
+
+  // Register Code Action Provider (Quick Fixes)
+  const supportedLanguages = [
+    'javascript',
+    'typescript',
+    'javascriptreact',
+    'typescriptreact',
+  ];
+  for (const language of supportedLanguages) {
+    context.subscriptions.push(
+      vscode.languages.registerCodeActionsProvider(
+        { language, scheme: 'file' },
+        new NamingHelperCodeActionProvider(diagnosticsManager),
+        {
+          providedCodeActionKinds:
+            NamingHelperCodeActionProvider.providedCodeActionKinds,
+        }
+      )
+    );
+  }
+
+  // Command: Apply Safe Rename
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      'namingHelper.applyRename',
+      async (
+        uri: vscode.Uri,
+        position: vscode.Position,
+        oldName: string,
+        newName: string
+      ) => {
+        await applySafeRename(uri, position, oldName, newName);
+      }
+    )
+  );
+
+  // Command: Ignore Name
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      'namingHelper.ignoreName',
+      async (name: string) => {
+        await addIgnoredName(name);
+        if (vscode.window.activeTextEditor) {
+          diagnosticsManager?.scheduleScan(
+            vscode.window.activeTextEditor.document,
+            true
+          );
+        }
+      }
+    )
   );
 }
 

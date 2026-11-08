@@ -6,7 +6,7 @@ import {
   WeakNameViolation,
   DEFAULT_CONFIG,
 } from '../types';
-import { inferFromInitializer } from './fromValue';
+import { suggestCandidates } from '../suggester';
 
 /**
  * Checks whether an identifier is used in a math or coordinate context
@@ -182,7 +182,7 @@ export function checkWeakName(
       return null;
     }
 
-    const candidates = inferFromInitializer(decl);
+    const candidates = suggestCandidates(decl, scopes, config);
     return {
       name: rawName,
       range: decl.range,
@@ -232,7 +232,7 @@ export function checkWeakName(
       return null;
     }
 
-    const candidates = inferFromInitializer(decl);
+    const candidates = suggestCandidates(decl, scopes, config);
     return {
       name: rawName,
       range: decl.range,
@@ -267,7 +267,7 @@ export function checkWeakName(
 
     // If repeated in scope, or generic base name like item1, user1
     if (isRepeated || ['item', 'list', 'data', 'temp', 'user', 'val'].includes(baseName.toLowerCase())) {
-      const candidates = inferFromInitializer(decl);
+      const candidates = suggestCandidates(decl, scopes, config);
       return {
         name: rawName,
         range: decl.range,
@@ -286,7 +286,7 @@ export function checkWeakName(
   // 4. Type contradiction check
   // e.g. A boolean called 'flag' or an array called 'item'
   if (isInferredBoolean(decl) && ['flag', 'val', 'value', 'temp'].includes(lowerName)) {
-    const candidates = inferFromInitializer(decl);
+    const candidates = suggestCandidates(decl, scopes, config);
     return {
       name: rawName,
       range: decl.range,
@@ -302,7 +302,7 @@ export function checkWeakName(
   }
 
   if (isInferredArray(decl) && ['item', 'element', 'thing', 'entry'].includes(lowerName)) {
-    const candidates = inferFromInitializer(decl);
+    const candidates = suggestCandidates(decl, scopes, config);
     return {
       name: rawName,
       range: decl.range,

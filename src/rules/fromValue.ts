@@ -583,3 +583,4 @@ export function inferFromInitializer(decl: DeclarationInfo): Candidate[] {
 
   return [];
 }
+
