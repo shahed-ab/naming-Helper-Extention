@@ -8,8 +8,11 @@ import {
 } from './codeActions';
 import { NamingHelperHoverProvider } from './hover';
 import { openNamingRulesGuide } from './guide';
+import { NamingStatusBarManager } from './statusBar';
+import { suggestBetterNameWithAI } from './ai';
 
 let diagnosticsManager: DiagnosticsManager | undefined;
+let statusBarManager: NamingStatusBarManager | undefined;
 
 /**
  * Activates the Naming Helper extension.
@@ -18,21 +21,28 @@ let diagnosticsManager: DiagnosticsManager | undefined;
  */
 export function activate(context: vscode.ExtensionContext): void {
   diagnosticsManager = new DiagnosticsManager();
+  statusBarManager = new NamingStatusBarManager(diagnosticsManager);
+
   context.subscriptions.push({
     dispose: () => {
       diagnosticsManager?.dispose();
+      statusBarManager?.dispose();
     },
   });
 
   // Scan currently active text editor if open
   if (vscode.window.activeTextEditor) {
     diagnosticsManager.scheduleScan(vscode.window.activeTextEditor.document, true);
+    statusBarManager.update(vscode.window.activeTextEditor);
   }
 
   // Document opened
   context.subscriptions.push(
     vscode.workspace.onDidOpenTextDocument((document) => {
       diagnosticsManager?.scheduleScan(document);
+      if (vscode.window.activeTextEditor?.document === document) {
+        statusBarManager?.update(vscode.window.activeTextEditor);
+      }
     })
   );
 
@@ -40,6 +50,9 @@ export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
     vscode.workspace.onDidChangeTextDocument((event) => {
       diagnosticsManager?.scheduleScan(event.document);
+      if (vscode.window.activeTextEditor?.document === event.document) {
+        statusBarManager?.update(vscode.window.activeTextEditor);
+      }
     })
   );
 
@@ -47,6 +60,7 @@ export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
     vscode.workspace.onDidCloseTextDocument((document) => {
       diagnosticsManager?.handleDocumentClosed(document);
+      statusBarManager?.update(vscode.window.activeTextEditor);
     })
   );
 
@@ -56,6 +70,7 @@ export function activate(context: vscode.ExtensionContext): void {
       if (editor) {
         diagnosticsManager?.scheduleScan(editor.document, true);
       }
+      statusBarManager?.update(editor);
     })
   );
 
@@ -69,6 +84,7 @@ export function activate(context: vscode.ExtensionContext): void {
             true
           );
         }
+        statusBarManager?.update(vscode.window.activeTextEditor);
       }
     })
   );
@@ -85,6 +101,20 @@ export function activate(context: vscode.ExtensionContext): void {
       vscode.window.showInformationMessage(
         `Naming Helper: Scanned ${editor.document.fileName}`
       );
+    })
+  );
+
+  // Command: Show Report
+  context.subscriptions.push(
+    vscode.commands.registerCommand('namingHelper.showReport', async () => {
+      await statusBarManager?.showReport(vscode.window.activeTextEditor);
+    })
+  );
+
+  // Command: Suggest Better Name With AI (Milestone 6)
+  context.subscriptions.push(
+    vscode.commands.registerCommand('namingHelper.suggestWithAI', async () => {
+      await suggestBetterNameWithAI(context);
     })
   );
 
@@ -176,5 +206,7 @@ export function activate(context: vscode.ExtensionContext): void {
 export function deactivate(): void {
   diagnosticsManager?.dispose();
   diagnosticsManager = undefined;
+  statusBarManager?.dispose();
+  statusBarManager = undefined;
 }
 
