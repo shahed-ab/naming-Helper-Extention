@@ -1,7 +1,8 @@
 <div align="center">
 
 <!-- Replace with your real icon: 128x128 PNG -->
-<img src="images/icon.png" alt="Naming Helper logo" width="110" />
+<img src="<img width="2048" height="2048" alt="Naming helper logo" src="https://github.com/user-attachments/assets/6a551bec-b76c-48a2-8edd-3f0f61a9f08e" />
+" alt="Naming Helper logo" width="110" />
 
 # Naming Helper
 > **Helps beginner developers write better variable names by detecting weak names and suggesting clearer, context-aware alternatives.**
