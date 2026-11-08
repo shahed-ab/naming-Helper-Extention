@@ -7,6 +7,9 @@ import { extractEnclosingFunctionSnippet } from './aiUtils';
 
 export { extractEnclosingFunctionSnippet } from './aiUtils';
 
+const CONSENT_STATE_KEY = 'namingHelper.aiConsent';
+const SECRET_API_KEY = 'namingHelper.apiKey';
+
 /**
  * Checks or requests one-time explicit user consent before transmitting any code.
  */

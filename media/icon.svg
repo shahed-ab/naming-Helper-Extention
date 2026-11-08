@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0e639c"/>
+      <stop offset="100%" stop-color="#1177bb"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="24" fill="url(#grad)"/>
+  <path d="M64 24a24 24 0 0 0-16 41.8V76a4 4 0 0 0 4 4h24a4 4 0 0 0 4-4v-10.2A24 24 0 0 0 64 24zm-8 62h16v4H56zm3 8h10v3H59z" fill="#ffcc00"/>
+  <path d="M38 104l14-14m24 0l14 14" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+  <text x="64" y="112" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">NAMING</text>
+</svg>
+

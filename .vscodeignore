@@ -1,0 +1,12 @@
+.vscode/**
+src/**
+test-fixtures/**
+tsconfig.json
+esbuild.js
+**/*.map
+.gitignore
+pnpm-lock.yaml
+pnpm-workspace.yaml
+.npmrc
+dist/test-write.txt
+*.vsix

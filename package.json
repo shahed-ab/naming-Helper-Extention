@@ -3,6 +3,12 @@
   "displayName": "Naming Helper",
   "description": "Helps beginner developers write better variable names by detecting weak names and suggesting clearer alternatives.",
   "version": "0.1.0",
+  "publisher": "naming-helper",
+  "icon": "media/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/developer/naming-helper"
+  },
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -156,7 +162,8 @@
     "compile": "node esbuild.js",
     "watch": "node esbuild.js --watch",
     "test:unit": "mocha --require ts-node/register \"src/test/suite/**/*.test.ts\"",
-    "build:tests": "tsc -p ./ -noEmit",
+    "build:tests": "tsc -p ./ --noEmit",
+    "package": "vsce package --no-dependencies --no-git-tag-version",
     "test": "npm run test:unit"
   },
   "dependencies": {
