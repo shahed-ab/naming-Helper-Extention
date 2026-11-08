@@ -1,0 +1,175 @@
+{
+  "name": "naming-helper",
+  "displayName": "Naming Helper",
+  "description": "Helps beginner developers write better variable names by detecting weak names and suggesting clearer alternatives.",
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Linters",
+    "Programming Languages"
+  ],
+  "activationEvents": [
+    "onLanguage:javascript",
+    "onLanguage:typescript",
+    "onLanguage:javascriptreact",
+    "onLanguage:typescriptreact"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "namingHelper.scanFile",
+        "title": "Naming Helper: Scan Current File"
+      },
+      {
+        "command": "namingHelper.showReport",
+        "title": "Naming Helper: Show Report"
+      },
+      {
+        "command": "namingHelper.explainRules",
+        "title": "Naming Helper: Explain Naming Rules"
+      },
+      {
+        "command": "namingHelper.toggle",
+        "title": "Naming Helper: Enable/Disable"
+      },
+      {
+        "command": "namingHelper.suggestWithAI",
+        "title": "Naming Helper: Suggest Better Name With AI"
+      }
+    ],
+    "configuration": {
+      "title": "Naming Helper",
+      "properties": {
+        "namingHelper.enable": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable or disable Naming Helper diagnostics."
+        },
+        "namingHelper.severity": {
+          "type": "string",
+          "enum": [
+            "Hint",
+            "Information",
+            "Warning"
+          ],
+          "default": "Hint",
+          "description": "Diagnostic severity level for weak variable names."
+        },
+        "namingHelper.confidenceThreshold": {
+          "type": "number",
+          "default": 0.6,
+          "description": "Minimum confidence threshold (0.0 - 1.0) required to show suggestions."
+        },
+        "namingHelper.blocklist": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "x",
+            "temp",
+            "tmp",
+            "data",
+            "data2",
+            "foo",
+            "bar",
+            "baz",
+            "val",
+            "value",
+            "res",
+            "arr",
+            "obj",
+            "thing",
+            "stuff",
+            "item1",
+            "list1"
+          ],
+          "description": "Names considered weak and flagged as poor practice."
+        },
+        "namingHelper.allowedSingleLetters": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "i",
+            "j",
+            "k",
+            "e",
+            "_"
+          ],
+          "description": "Single-letter variable names permitted in designated contexts."
+        },
+        "namingHelper.ignoredNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Names to ignore completely across the workspace."
+        },
+        "namingHelper.excludeGlobs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "**/node_modules/**",
+            "**/dist/**",
+            "**/*.min.js",
+            "**/*.d.ts"
+          ],
+          "description": "Glob patterns of files to exclude from scanning."
+        },
+        "namingHelper.debounceMs": {
+          "type": "number",
+          "default": 500,
+          "description": "Debounce delay in milliseconds before scanning on document edits."
+        },
+        "namingHelper.showStatusBar": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the Naming Score in the status bar."
+        },
+        "namingHelper.ai.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable optional AI-assisted name suggestions (Milestone 6)."
+        },
+        "namingHelper.ai.provider": {
+          "type": "string",
+          "enum": [
+            "none",
+            "custom-endpoint"
+          ],
+          "default": "none",
+          "description": "AI provider backend for suggestions."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "node esbuild.js --production",
+    "compile": "node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "test:unit": "mocha --require ts-node/register \"src/test/suite/**/*.test.ts\"",
+    "build:tests": "tsc -p ./ -noEmit",
+    "test": "npm run test:unit"
+  },
+  "dependencies": {
+    "typescript": "^5.4.5"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.12.7",
+    "@types/vscode": "^1.85.0",
+    "@vscode/test-electron": "^2.3.9",
+    "esbuild": "^0.20.2",
+    "mocha": "^10.4.0",
+    "ts-node": "^10.9.2"
+  }
+}
+
